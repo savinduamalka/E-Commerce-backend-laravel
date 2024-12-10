@@ -73,4 +73,19 @@ class RegisteredUserController extends Controller
         $user = $request->user();
         return response()->json(['user' => $user], 200);
     }
+
+    // Update the authenticated user's details without user email.
+     
+    public function update(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'city' => ['sometimes', 'string', 'max:255'],
+        ]);
+
+        $user = $request->user();
+        $user->update($request->only('name', 'city'));
+
+        return response()->json(['user' => $user], 200);
+    }
 }

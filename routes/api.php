@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Routes
     Route::get('/user', [RegisteredUserController::class, 'index']);
     Route::get('/user/me', [RegisteredUserController::class, 'show']); // Get own data
+    Route::put('/user/me', [RegisteredUserController::class, 'update']); // Update own data
     Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
