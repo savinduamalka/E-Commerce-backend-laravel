@@ -64,4 +64,13 @@ class RegisteredUserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
+
+    
+     // Get the authenticated user's data.
+     
+    public function show(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        return response()->json(['user' => $user], 200);
+    }
 }

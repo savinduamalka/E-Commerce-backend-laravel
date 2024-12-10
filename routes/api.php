@@ -35,10 +35,10 @@ Route::get('/featured-products', [ProductController::class, 'featured']);
 //  Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     // User Routes
-    Route::middleware('auth:sanctum')->get('/user', [RegisteredUserController::class, 'index']);
-    Route::middleware('auth:sanctum')->delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
+    Route::get('/user', [RegisteredUserController::class, 'index']);
+    Route::get('/user/me', [RegisteredUserController::class, 'show']); // Get own data
+    Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
 
-   
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     // Admin Routes
