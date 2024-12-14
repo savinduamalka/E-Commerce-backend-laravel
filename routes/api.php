@@ -45,8 +45,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Routes
     Route::get('/admin/stats', [AdminDashboardController::class, 'getStats']);
 
-     //create category
+     // category
     Route::post('/category', [CategoryController::class, 'store']);
+    Route::delete('/category/{category}', [CategoryController::class, 'destroy']);
+
+    // product
     Route::middleware(EnsureUserIsAdmin::class)->prefix('products')->group(function () {
         Route::post('/', [ProductController::class, 'store']);
         Route::put('/{product}', [ProductController::class, 'update']);

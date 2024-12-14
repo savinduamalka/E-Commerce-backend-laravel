@@ -25,4 +25,12 @@ class CategoryController extends Controller
     {
         return CategoryResource::collection(Category::all());
     }
+
+    public function destroy(Category $category)
+    {
+        $category->delete();
+        return response()->json([
+            'message' => 'Category deleted successfully'
+        ]);
+    }
 }
