@@ -33,4 +33,18 @@ class CategoryController extends Controller
             'message' => 'Category deleted successfully'
         ]);
     }
+    public function update(Category $category)
+    {
+        $data = request()->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image_url' => 'required|string',
+        ]);
+
+        $category->update($data);
+
+        return response()->json([
+            'category' => $category
+        ]);
+    }
 }
