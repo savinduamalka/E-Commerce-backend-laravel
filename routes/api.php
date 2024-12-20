@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
@@ -24,13 +25,10 @@ Route::prefix('products')->group(function () {
         ->missing(fn() => response()->json(['message' => 'Category not found'], 404));
 });
 
-
-
 // Category Routes
 Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
-
 
 Route::get('/featured-products', [ProductController::class, 'featured']);
 
@@ -42,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/me', [RegisteredUserController::class, 'update']); // Update own data
     Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
 
-    //create cart
+    // cart routes
     Route::post('/cart', [CartController::class, 'store']);
     Route::get('/cart', [CartController::class, 'show']);
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
@@ -52,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Routes
     Route::get('/admin/stats', [AdminDashboardController::class, 'getStats']);
 
-     // category
+    // category
     Route::post('/category', [CategoryController::class, 'store']);
     Route::delete('/category/{category}', [CategoryController::class, 'destroy']);
     Route::put('/category/{category}', [CategoryController::class, 'update']);
@@ -63,4 +61,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
+
+    // Order routes
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
+
 });
