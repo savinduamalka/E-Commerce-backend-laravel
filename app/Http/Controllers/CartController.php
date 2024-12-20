@@ -69,54 +69,26 @@ class CartController extends Controller
         ], 200);
     }
 
-    // Optional: Method to update the cart items
-    public function update(Request $request, $cartId): JsonResponse
+    // destroy the cart item for the authenticated user
+    public function destroy(Request $request, $id): JsonResponse
     {
-        $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ]);
-
-        // Get the authenticated user
         $user = $request->user();
-
-        // Find the cart by ID for the user
-        $cart = Cart::where('user_id', $user->id)->find($cartId);
+        $cart = Cart::where('user_id', $user->id)->first();
 
         if (!$cart) {
-            return response()->json(['message' => 'Cart not found'], 404);
+            return response()->json(['message' => 'No cart found for this user.'], 404);
         }
 
-        // Loop through the items and update the cart
-        foreach ($request->items as $item) {
-            $product = Product::find($item['product_id']);
-            $cartItem = CartItem::where('cart_id', $cart->id)
-                ->where('product_id', $item['product_id'])
-                ->first();
+        $cartItem = CartItem::where('cart_id', $cart->id)->where('id', $id)->first();
 
-            if ($cartItem) {
-                // Update existing cart item
-                $cartItem->update([
-                    'quantity' => $item['quantity'],
-                    'total' => $product->price * $item['quantity'],
-                ]);
-            } else {
-                // Add new cart item if not already present
-                CartItem::create([
-                    'cart_id' => $cart->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $product->price,
-                    'total' => $product->price * $item['quantity'],
-                ]);
-            }
+        if (!$cartItem) {
+            return response()->json(['message' => 'No cart item found for this user.'], 404);
         }
 
-        // Return the updated cart
+        $cartItem->delete();
+
         return response()->json([
-            'message' => 'Cart updated successfully',
-            'cart' => $cart->load('items.product'),  // Include the cart items and product details
+            'message' => 'Cart item deleted successfully'
         ], 200);
     }
 }
