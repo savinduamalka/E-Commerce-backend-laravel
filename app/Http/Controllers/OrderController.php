@@ -56,4 +56,26 @@ class OrderController extends Controller
             'orders' => $orders
         ], 200);
     }
+
+    // Method to update the order status
+    public function updateStatus(Request $request, $orderId): JsonResponse
+    {
+        $request->validate([
+            'status' => 'required|in:pending,completed,declined',
+        ]);
+
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order status updated successfully',
+            'order' => $order,
+        ], 200);
+    }
 }
