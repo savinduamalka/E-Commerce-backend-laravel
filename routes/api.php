@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::prefix('products')->group(function () {
 });
 
 
+
 // Category Routes
 Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
@@ -39,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/me', [RegisteredUserController::class, 'show']); // Get own data
     Route::put('/user/me', [RegisteredUserController::class, 'update']); // Update own data
     Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
+
+    //create cart
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::get('/cart', [CartController::class, 'show']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
