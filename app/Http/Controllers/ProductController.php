@@ -14,7 +14,7 @@ class ProductController extends Controller
     public function index()
     {
         return new ProductCollection(
-            Product::with(['category', 'images'])->paginate(12)
+            Product::with(['category'])->paginate(12)
         );
     }
 
@@ -30,27 +30,20 @@ class ProductController extends Controller
             'discounted_price' => $validated['discountedPrice'] ?? null,
             'category_id' => $validated['categoryId'],
             'stock' => $validated['stock'],
-            'featured' => $validated['featured'] ?? false,
+            'image' => $validated['image'], 
         ]);
-
-        // Store product images
-        foreach ($validated['imageUrls'] as $image_url) {
-            $product->images()->create([
-                'url' => $image_url,
-            ]);
-        }
 
         // Load relationships and return response
         return response()->json([
             'message' => 'Product created successfully',
-            'data' => $product->load(['category', 'images'])
+            'data' => $product->load(['category'])
         ], 201);
     }
 
     public function show(Product $product)
     {
         return new ProductResource(
-            $product->load(['category', 'images'])
+            $product->load(['category'])
         );
     }
 
@@ -66,33 +59,17 @@ class ProductController extends Controller
             'discounted_price' => $validated['discountedPrice'] ?? $product->discounted_price,
             'category_id' => $validated['categoryId'] ?? $product->category_id,
             'stock' => $validated['stock'] ?? $product->stock,
-            'featured' => $validated['featured'] ?? $product->featured,
+            'image' => $validated['image'] ?? $product->image, 
         ])->save();
-
-        // Update images if provided
-        if (isset($validated['imageUrls'])) {
-            // Delete existing images
-            $product->images()->delete();
-
-            // Add new images
-            foreach ($validated['imageUrls'] as $image_url) {
-                $product->images()->create([
-                    'url' => $image_url,
-                ]);
-            }
-        }
 
         return response()->json([
             'message' => 'Product updated successfully',
-            'data' =>  new ProductResource($product->load(['category', 'images']))
+            'data' =>  new ProductResource($product->load(['category']))
         ]);
     }
 
     public function destroy(Product $product)
     {
-        // Delete associated images first
-        $product->images()->delete();
-
         // Delete the product
         $product->delete();
 
@@ -104,7 +81,7 @@ class ProductController extends Controller
     public function featured()
     {
         return new ProductCollection(
-            Product::with(['category', 'images'])
+            Product::with(['category'])
                 ->where('featured', true)
                 ->get()
         );
@@ -113,7 +90,7 @@ class ProductController extends Controller
     public function byCategory($categoryId)
     {
         return new ProductCollection(
-            Product::with(['category', 'images'])
+            Product::with(['category'])
                 ->where('category_id', $categoryId)
                 ->get()
         );

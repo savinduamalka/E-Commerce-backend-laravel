@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Category;
-use App\Models\ProductImage;
 use App\Models\OrderItem;
 use App\Models\CartItem;
 
@@ -22,17 +21,12 @@ class Product extends Model
         'discounted_price',
         'category_id',
         'stock',
-        'featured'
+        'image' 
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function images()
-    {
-        return $this->hasMany(ProductImage::class);
     }
 
     public function orderItems()
