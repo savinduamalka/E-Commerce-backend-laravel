@@ -39,16 +39,12 @@ class RegisteredUserController extends Controller
         ], 201);
     }
 
+    //fetch users with pagination
     public function index(): JsonResponse
     {
-        // Fetch all users
-        $users = User::all();
-
-        // Return as JSON response
-        return response()->json([
-            'users' => $users
-        ], 200);
+        return response()->json(User::paginate(12));
     }
+    
 
     public function destroy($id): JsonResponse
     {
