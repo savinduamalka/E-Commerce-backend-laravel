@@ -26,7 +26,7 @@ class ProductCollection extends ResourceCollection
                     'stock' => $product->stock,
                     'categoryName' => $product->category->name,
                     'categoryId' => $product->category->id,
-                    'imageUrl' => $product->images->first() ? $product->images->first()->url : null,
+                    'image' => $product->image,
                 ];
             }),
         ];

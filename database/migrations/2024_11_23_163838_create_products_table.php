@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('discounted_price', 10, 2)->nullable();
             $table->foreignId('category_id')->constrained()->onDelete('cascade'); // if the category is deleted, delete the product
             $table->integer('stock');
-            $table->boolean('featured')->default(false);
+            $table->string('image'); 
             $table->timestamps();
         });
     }

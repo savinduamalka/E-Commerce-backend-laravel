@@ -16,16 +16,13 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'discountedPrice' => $this->discounted_price,
             'stock' => $this->stock,
-            'featured' => $this->featured,
             'categoryId' => $this->when($this->category, function () {
                 return $this->category->id;
             }),
             'categoryName' => $this->when($this->category, function () {
                 return $this->category->name;
             }),
-            'imageUrls' => $this->whenLoaded('images', function () {
-                return $this->images->pluck('url')->toArray();
-            }),
+            'image' => $this->image, 
         ];
     }
 }
