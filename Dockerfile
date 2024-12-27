@@ -1,10 +1,8 @@
-# backend/Dockerfile
-
-# Use the official PHP image with FPM
-FROM php:8.2-fpm
+# Use the official PHP image with Apache
+FROM php:8.2-apache
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -23,15 +21,28 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy application files
-COPY . /var/www
+COPY . /var/www/html
 
 # Install Composer dependencies
 RUN composer install --optimize-autoloader --no-dev
 
 # Copy existing application permissions
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
 
-# Expose port 9000 and start PHP-FPM
-EXPOSE 9000
-CMD ["php-fpm"]
+# Disable default apache config if exists
+RUN a2dissite 000-default.conf || true
+
+# Copy your apache config
+COPY your-domain.conf /etc/apache2/sites-available/your-domain.conf
+
+RUN a2ensite your-domain.conf
+# Add listen to ports.conf
+RUN echo "Listen 80" >> /etc/apache2/ports.conf
+RUN echo "Listen *:80" >> /etc/apache2/ports.conf
+
+# Restart Apache 
+RUN service apache2 restart
+
+# Expose port 80 for HTTP requests
+EXPOSE 80
