@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+
     // Create a new order for the authenticated user
     public function store(Request $request): JsonResponse
     {
@@ -46,16 +47,12 @@ class OrderController extends Controller
         ], 201);
     }
 
-    // Fetch all orders for the authenticated user
-    public function index(Request $request): JsonResponse
+    // Fetch all orders and order items with pagination 
+    public function index(): JsonResponse
     {
-        $user = $request->user();
-        $orders = Order::where('user_id', $user->id)->with('items.product')->get();
-
-        return response()->json([
-            'orders' => $orders
-        ], 200);
+        return response()->json(Order::with('items.product')->paginate(12));
     }
+
 
     // Method to update the order status
     public function updateStatus(Request $request, $orderId): JsonResponse
