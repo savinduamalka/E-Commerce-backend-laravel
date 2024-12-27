@@ -15,7 +15,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy application files to the container
 COPY . /var/www/html
 
-
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
