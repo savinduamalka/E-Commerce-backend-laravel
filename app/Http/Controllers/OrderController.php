@@ -32,6 +32,13 @@ class OrderController extends Controller
         foreach ($request->items as $item) {
             $product = Product::find($item['product_id']);
 
+            // Reduce the stock of the product
+            if ($product->stock < $item['quantity']) {
+                return response()->json(['message' => 'Insufficient stock for product: ' . $product->name], 400);
+            }
+            $product->stock -= $item['quantity'];
+            $product->save();
+
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
@@ -67,6 +74,15 @@ class OrderController extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        // If the status is changed to "declined", increase the stock
+        if ($order->status !== 'declined' && $request->status === 'declined') {
+            foreach ($order->items as $item) {
+                $product = Product::find($item->product_id);
+                $product->stock += $item->quantity;
+                $product->save();
+            }
+        }
+
         $order->status = $request->status;
         $order->save();
 
@@ -83,6 +99,15 @@ class OrderController extends Controller
 
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Increase the stock of the products in the order only if the order is "pending"
+        if ($order->status === 'pending') {
+            foreach ($order->items as $item) {
+                $product = Product::find($item->product_id);
+                $product->stock += $item->quantity;
+                $product->save();
+            }
         }
 
         $order->delete();
