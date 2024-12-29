@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Cart;
+use App\Models\Order;
 
-use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
@@ -18,7 +17,7 @@ class AdminDashboardController extends Controller
                 'total_users' => User::count(),
                 'total_categories' => Category::count(),
                 'total_products' => Product::count(),
-                'total_cart_items' => Cart::count(),
+                'total_orders' => Order::count(),
             ];
 
             return response()->json($stats, 200);
