@@ -38,12 +38,14 @@ class CartController extends Controller
                 return response()->json(['message' => 'Product not found'], 404);
             }
 
+            $price = $product->discounted_price ?? $product->price;
+
             // Create a cart item for each product added
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
-                'total' => $product->price * $item['quantity'],
+                'total' => $price * $item['quantity'],
             ]);
         }
 
@@ -58,7 +60,7 @@ class CartController extends Controller
     public function show(Request $request): JsonResponse
     {
         $user = $request->user();
-        $cart = Cart::where('user_id', $user->id)->with('items.product')->first();
+        $cart = Cart::where('user_id', $user->id)->with(['items.product'])->first();
 
         if (!$cart) {
             // Return an empty cart instead of a 404 error
@@ -71,8 +73,27 @@ class CartController extends Controller
             ], 200);
         }
 
+        // Include the price field with the discounted price
+        $cartItems = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cart_id' => $item->cart_id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'total' => $item->total,
+                'product' => $item->product,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        });
+
         return response()->json([
-            'cart' => $cart
+            'cart' => [
+                'id' => $cart->id,
+                'user_id' => $cart->user_id,
+                'items' => $cartItems
+            ]
         ], 200);
     }
 

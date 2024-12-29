@@ -39,12 +39,14 @@ class OrderController extends Controller
             $product->stock -= $item['quantity'];
             $product->save();
 
+            $price = $product->discounted_price ?? $product->price;
+
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
-                'price' => $product->price,
-                'total' => $product->price * $item['quantity'],
+                'price' => $price,
+                'total' => $price * $item['quantity'],
             ]);
         }
 

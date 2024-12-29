@@ -30,4 +30,10 @@ class CartItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    // Accessor to get the discounted price
+    public function getPriceAttribute($value)
+    {
+        return $this->product->discounted_price ?? $this->product->price;
+    }
 }
