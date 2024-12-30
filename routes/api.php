@@ -7,7 +7,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AdminDashboardController;
@@ -30,16 +29,13 @@ Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
 
-
-//  Protected Routes
+// Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     // User Routes
-    Route::get('/user', [RegisteredUserController::class, 'index']);
     Route::get('/user/me', [RegisteredUserController::class, 'show']); // Get own data
     Route::put('/user/me', [RegisteredUserController::class, 'update']); // Update own data
-    Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
 
-    // cart routes
+    // Cart routes
     Route::post('/cart', [CartController::class, 'store']);
     Route::get('/cart', [CartController::class, 'show']);
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
@@ -48,24 +44,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     // Admin Routes
-    Route::get('/admin/stats', [AdminDashboardController::class, 'getStats']);
+    Route::middleware(EnsureUserIsAdmin::class)->group(function () {
+        Route::get('/user', [RegisteredUserController::class, 'index']);
+        Route::delete('/user/{id}', [RegisteredUserController::class, 'destroy']);
+        Route::get('/admin/stats', [AdminDashboardController::class, 'getStats']);
 
-    // category
-    Route::post('/category', [CategoryController::class, 'store']);
-    Route::delete('/category/{category}', [CategoryController::class, 'destroy']);
-    Route::put('/category/{category}', [CategoryController::class, 'update']);
+        // Category routes
+        Route::post('/category', [CategoryController::class, 'store']);
+        Route::delete('/category/{category}', [CategoryController::class, 'destroy']);
+        Route::put('/category/{category}', [CategoryController::class, 'update']);
 
-    // product
-    Route::middleware(EnsureUserIsAdmin::class)->prefix('products')->group(function () {
-        Route::post('/', [ProductController::class, 'store']);
-        Route::put('/{product}', [ProductController::class, 'update']);
-        Route::delete('/{product}', [ProductController::class, 'destroy']);
+        // Product routes
+        Route::prefix('products')->group(function () {
+            Route::post('/', [ProductController::class, 'store']);
+            Route::put('/{product}', [ProductController::class, 'update']);
+            Route::delete('/{product}', [ProductController::class, 'destroy']);
+        });
+
+        // Order routes
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::put('/orders/{orderId}/status', [OrderController::class, 'updateStatus']);
+        Route::delete('/orders/{orderId}', [OrderController::class, 'destroy']);
     });
-
-    // Order routes
-    Route::post('/orders', [OrderController::class, 'store']);
-    Route::get('/orders', [OrderController::class, 'index']);
-    Route::put('/orders/{orderId}/status', [OrderController::class, 'updateStatus']);
-    Route::delete('/orders/{orderId}', [OrderController::class, 'destroy']); 
-
 });
