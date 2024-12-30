@@ -30,7 +30,6 @@ Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
 
-Route::get('/featured-products', [ProductController::class, 'featured']);
 
 //  Protected Routes
 Route::middleware('auth:sanctum')->group(function () {

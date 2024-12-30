@@ -78,15 +78,6 @@ class ProductController extends Controller
         ]);
     }
 
-    public function featured()
-    {
-        return new ProductCollection(
-            Product::with(['category'])
-                ->where('featured', true)
-                ->get()
-        );
-    }
-
     public function byCategory($categoryId)
     {
         return new ProductCollection(
