@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'show']);
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
     Route::delete('/cart', [CartController::class, 'destroyCart']);
+    Route::post('/orders', [OrderController::class, 'store']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
@@ -62,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         // Order routes
-        Route::post('/orders', [OrderController::class, 'store']);
+
         Route::get('/orders', [OrderController::class, 'index']);
         Route::put('/orders/{orderId}/status', [OrderController::class, 'updateStatus']);
         Route::delete('/orders/{orderId}', [OrderController::class, 'destroy']);

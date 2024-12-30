@@ -38,6 +38,11 @@ class CartController extends Controller
                 return response()->json(['message' => 'Product not found'], 404);
             }
 
+            // Check if there is enough stock
+            if ($product->stock < $item['quantity']) {
+                return response()->json(['message' => 'Insufficient stock for product: ' . $product->name], 400);
+            }
+
             $price = $product->discounted_price ?? $product->price;
 
             // Create a cart item for each product added
