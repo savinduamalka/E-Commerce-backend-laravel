@@ -37,8 +37,6 @@ RUN a2dissite 000-default.conf || true
 COPY your-domain.conf /etc/apache2/sites-available/your-domain.conf
 
 RUN a2ensite your-domain.conf
-# Add listen to ports.conf
-RUN echo "Listen 80" >> /etc/apache2/ports.conf
 
 # Restart Apache 
 RUN service apache2 restart
