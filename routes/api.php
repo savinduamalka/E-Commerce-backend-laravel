@@ -10,6 +10,7 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\EmailController;
 
 // Authentication Routes
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -28,6 +29,9 @@ Route::prefix('products')->group(function () {
 Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
+
+//Email store route
+Route::post('/subscribe', [EmailController::class, 'subscribe']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
