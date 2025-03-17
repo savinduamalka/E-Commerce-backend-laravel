@@ -30,8 +30,9 @@ Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
 
-//Email store route
+//Email route
 Route::post('/subscribe', [EmailController::class, 'subscribe']);
+Route::get('/emails', [EmailController::class, 'getAllEmails']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -73,3 +74,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/orders/{orderId}', [OrderController::class, 'destroy']);
     });
 });
+
+
