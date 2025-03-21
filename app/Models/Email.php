@@ -10,6 +10,8 @@ class Email extends Model
     use HasFactory;
 
     protected $fillable = ['email'];
+
+    protected $table = 'email'; // Change table name to 'email'
 }
 
 

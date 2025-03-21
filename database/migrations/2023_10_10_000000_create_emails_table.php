@@ -7,7 +7,7 @@ class CreateEmailsTable extends Migration
 {
     public function up()
     {
-        Schema::create('emails', function (Blueprint $table) {
+        Schema::create('email', function (Blueprint $table) {
             $table->id();
             $table->string('email')->unique();
             $table->timestamps();
@@ -16,6 +16,6 @@ class CreateEmailsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('emails');
+        Schema::dropIfExists('email');
     }
 }
