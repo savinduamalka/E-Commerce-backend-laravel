@@ -34,6 +34,10 @@ Route::prefix('categories')->group(function () {
 Route::post('/subscribe', [EmailController::class, 'subscribe']);
 Route::get('/emails', [EmailController::class, 'getAllEmails']);
 
+Route::get('/test', function (Request $request) {
+    return response()->json(['message' => 'Hello World']);
+});
+
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     // User Routes
