@@ -11,7 +11,7 @@ class Email extends Model
 
     protected $fillable = ['email'];
 
-    protected $table = 'email'; // Change table name to 'email'
+    protected $table = 'emails'; // Change table name to 'emails'
 }
 
 

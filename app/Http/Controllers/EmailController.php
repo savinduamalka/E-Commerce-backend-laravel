@@ -11,7 +11,7 @@ class EmailController extends Controller
     {
         // Validate the email input
         $request->validate([
-            'email' => 'required|email|unique:email,email', // Change table name to 'email'
+            'email' => 'required|email|unique:emails,email', // Change table name to 'emails'
         ]);
 
         // Create a new email record
