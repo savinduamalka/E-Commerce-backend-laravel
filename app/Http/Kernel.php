@@ -14,9 +14,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // ...existing code...
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            // ...existing code...
         ],
     ];
 }
