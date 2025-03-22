@@ -21,6 +21,7 @@ return [
 
     'allowed_origins' => [
         env('FRONTEND_URL', 'http://localhost:5173'), // Add your frontend URL here
+        'https://e-commerce-frontend-ruddy-ten.vercel.app', // Add your frontend URL here
     ],
 
     'allowed_origins_patterns' => [],
