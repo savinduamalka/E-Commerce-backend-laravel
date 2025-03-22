@@ -15,13 +15,14 @@ return [
     |
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('FRONTEND_URL', 'http://localhost:5173'), // Add your frontend URL here
-        'https://e-commerce-frontend-ruddy-ten.vercel.app', // Add your frontend URL here
+        'http://localhost:5173',
+        'https://e-commerce-frontend-ruddy-ten.vercel.app',
+        // Add more origins if needed
     ],
 
     'allowed_origins_patterns' => [],
