@@ -21,7 +21,8 @@ return [
 
     'allowed_origins' => [
         'http://localhost:5173',
-        'https://e-commerce-frontend-dsup.vercel.app'
+        'https://e-commerce-frontend-dsup.vercel.app',
+        'https://e-commerce-frontend-ruddy-ten.vercel.app',
         // Add more origins if needed
     ],
 
