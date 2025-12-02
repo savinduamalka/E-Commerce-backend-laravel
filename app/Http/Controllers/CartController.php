@@ -28,9 +28,12 @@ class CartController extends Controller
             'user_id' => Auth::user()->id
         ]);
 
+        $productIds = collect($request->items)->pluck('product_id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
         // Loop through the items and add them to the cart
         foreach ($request->items as $item) {
-            $product = Product::find($item['product_id']);
+            $product = $products->get($item['product_id']);
 
             // Check if product exists
             if (!$product) {

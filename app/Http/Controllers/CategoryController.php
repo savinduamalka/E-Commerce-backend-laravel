@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -16,6 +17,7 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::create($data);
+        Cache::forget('categories_all');
 
         return response()->json([
             'category' => $category
@@ -23,12 +25,16 @@ class CategoryController extends Controller
     }
     public function index()
     {
-        return CategoryResource::collection(Category::all());
+        $categories = Cache::remember('categories_all', 3600, function () {
+            return Category::all();
+        });
+        return CategoryResource::collection($categories);
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
+        Cache::forget('categories_all');
         return response()->json([
             'message' => 'Category deleted successfully'
         ]);
@@ -42,6 +48,7 @@ class CategoryController extends Controller
         ]);
 
         $category->update($data);
+        Cache::forget('categories_all');
 
         return response()->json([
             'category' => $category

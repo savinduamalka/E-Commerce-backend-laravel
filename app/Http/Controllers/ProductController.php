@@ -8,14 +8,18 @@ use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return new ProductCollection(
-            Product::with(['category'])->paginate(12)
-        );
+        $page = request()->get('page', 1);
+        return Cache::remember('products_page_' . $page, 600, function () {
+            return new ProductCollection(
+                Product::with(['category'])->paginate(12)
+            );
+        });
     }
 
     public function store(StoreProductRequest $request)
@@ -32,6 +36,9 @@ class ProductController extends Controller
             'stock' => $validated['stock'],
             'image' => $validated['image'], 
         ]);
+
+        // Clear cache
+        Cache::flush();
 
         // Load relationships and return response
         return response()->json([
@@ -62,6 +69,9 @@ class ProductController extends Controller
             'image' => $validated['image'] ?? $product->image, 
         ])->save();
 
+        // Clear cache
+        Cache::flush();
+
         return response()->json([
             'message' => 'Product updated successfully',
             'data' =>  new ProductResource($product->load(['category']))
@@ -72,6 +82,9 @@ class ProductController extends Controller
     {
         // Delete the product
         $product->delete();
+
+        // Clear cache
+        Cache::flush();
 
         return response()->json([
             'message' => 'Product deleted successfully'

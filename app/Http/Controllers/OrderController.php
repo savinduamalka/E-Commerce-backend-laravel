@@ -24,13 +24,20 @@ class OrderController extends Controller
 
         $user = Auth::user();
 
+        $productIds = collect($request->items)->pluck('product_id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
         $order = Order::create([
             'user_id' => $user->id,
             'status' => 'pending',
         ]);
 
         foreach ($request->items as $item) {
-            $product = Product::find($item['product_id']);
+            $product = $products->get($item['product_id']);
+
+            if (!$product) {
+                 return response()->json(['message' => 'Product not found: ' . $item['product_id']], 404);
+            }
 
             // Reduce the stock of the product
             if ($product->stock < $item['quantity']) {
@@ -65,18 +72,23 @@ class OrderController extends Controller
 
     // Method to update the order status
     public function updateStatus(Request $request, $orderId): JsonResponse
-    {
-        $request->validate([
-            'status' => 'required|in:pending,completed,declined',
-        ]);
-
-        $order = Order::find($orderId);
-
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        // Eager load items and their products to avoid N+1
+        $order->load('items.product');
+
         // If the status is changed to "declined", increase the stock
+        if ($order->status !== 'declined' && $request->status === 'declined') {
+            foreach ($order->items as $item) {
+                $product = $item->product;
+                if ($product) {
+                    $product->stock += $item->quantity;
+                    $product->save();
+                }
+            }
+        }/ If the status is changed to "declined", increase the stock
         if ($order->status !== 'declined' && $request->status === 'declined') {
             foreach ($order->items as $item) {
                 $product = Product::find($item->product_id);
@@ -94,18 +106,23 @@ class OrderController extends Controller
         ], 200);
     }
 
-    // Method to delete an order
-    public function destroy($orderId): JsonResponse
-    {
-        $order = Order::find($orderId);
-
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        // Eager load items and their products to avoid N+1
+        $order->load('items.product');
+
         // Increase the stock of the products in the order only if the order is "pending"
         if ($order->status === 'pending') {
             foreach ($order->items as $item) {
+                $product = $item->product;
+                if ($product) {
+                    $product->stock += $item->quantity;
+                    $product->save();
+                }
+            }
+        }   foreach ($order->items as $item) {
                 $product = Product::find($item->product_id);
                 $product->stock += $item->quantity;
                 $product->save();
